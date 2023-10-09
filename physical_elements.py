@@ -3,13 +3,14 @@
 
 import numpy as np
 import networkx as nx
+import matplotlib.pyplot as plt
 from mesa.space import NetworkGrid
 from mesa import Agent, Model
 
 railway_network = nx.DiGraph()
 
 #Creating the railway track
-railway_network.add_node("Rotterdam Cetraal", pos = (0,0), platforms = 4, type = "station")
+railway_network.add_node("Rotterdam Centraal", pos = (0,0), platforms = 4, type = "station")
 railway_network.add_node("Schiedam Centrum", pos = (0, 4.0), platforms = 4, type = "station")
 railway_network.add_node("Delft Campus", pos = (0, 12.5), platforms = 2, type = "station")
 railway_network.add_node("Delft", pos = (0, 14.4), platforms = 2, type = "station")
@@ -38,10 +39,10 @@ railway_network.add_edge("Switch 4", "Delft", length = 1.6, type = "track")
 railway_network.add_edge("Delft", "Switch 5", length = 2.5, type = "track")
 railway_network.add_edge("Switch 5", "Rijswijk", length = 1.8, type = "track")
 railway_network.add_edge("Switch 5", "Rijswijk", length = 1.8, type = "track")
-railway_network.add_edge("Rijswijk", "Moerdijk", length = 1.9, type = "track")
-railway_network.add_edge("Rijswijk", "Moerdijk", length = 1.9, type = "track")
-railway_network.add_edge("Moerdijk", "Switch 6", length = 0.6, type = "track")
-railway_network.add_edge("Moerdijk", "Switch 6", length = 0.6, type = "track")
+railway_network.add_edge("Rijswijk", "Moerwijk", length = 1.9, type = "track")
+railway_network.add_edge("Rijswijk", "Moerwijk", length = 1.9, type = "track")
+railway_network.add_edge("Moerwijk", "Switch 6", length = 0.6, type = "track")
+railway_network.add_edge("Moerwijk", "Switch 6", length = 0.6, type = "track")
 railway_network.add_edge("Switch 6", "Den Haag HS", length = 1.4, type = "track")
 railway_network.add_edge("Switch 6", "Den Haag HS", length = 1.4, type = "track")
 
@@ -59,10 +60,10 @@ railway_network.add_edge("Delft", "Switch 4", length = 1.6, type = "track")
 railway_network.add_edge("Switch 5", "Delft", length = 2.5, type = "track")
 railway_network.add_edge("Rijswijk", "Switch 5", length = 1.8, type = "track")
 railway_network.add_edge("Rijswijk", "Switch 5", length = 1.8, type = "track")
-railway_network.add_edge("Switch 6", "Rijswijk", length = 1.9, type = "track")
-railway_network.add_edge("Switch 6", "Rijswijk", length = 1.9, type = "track")
-railway_network.add_edge("Moerdijk", "Switch 6", length = 0.6, type = "track")
-railway_network.add_edge("Moerdijk", "Switch 6", length = 0.6, type = "track")
+railway_network.add_edge("Moerwijk", "Rijswijk", length = 1.9, type = "track")
+railway_network.add_edge("Moerwijk", "Rijswijk", length = 1.9, type = "track")
+railway_network.add_edge("Switch 6", "Moerwijk", length = 0.6, type = "track")
+railway_network.add_edge("Switch 6", "Moerwijk", length = 0.6, type = "track")
 railway_network.add_edge("Den Haag HS", "Switch 6", length = 1.4, type = "track")
 railway_network.add_edge("Den Haag HS", "Switch 6", length = 1.4, type = "track")
 
@@ -71,7 +72,7 @@ railway_network.add_edge("Den Haag HS", "Switch 6", length = 1.4, type = "track"
 railway_network_new = nx.DiGraph()
 
 #Creating the railway track
-railway_network.add_node("Rotterdam Cetraal", pos = (0,0), platforms = 4, type = "station")
+railway_network.add_node("Rotterdam Centraal", pos = (0,0), platforms = 4, type = "station")
 railway_network.add_node("Schiedam Centrum", pos = (0, 4.0), platforms = 4, type = "station")
 railway_network.add_node("Delft Campus", pos = (0, 12.5), platforms = 2, type = "station")
 railway_network.add_node("Delft", pos = (0, 14.4), platforms = 2, type = "station")
@@ -138,6 +139,20 @@ railway_network.add_edge("Moerdijk", "Switch 6", length = 0.6, type = "track")
 railway_network.add_edge("Den Haag HS", "Switch 6", length = 1.4, type = "track")
 railway_network.add_edge("Den Haag HS", "Switch 6", length = 1.4, type = "track")
 
+
+#Drawing the railway network
+pos = nx.spring_layout(railway_network)
+nx.draw(railway_network, pos, with_labels = True)
+
+for edge in railway_network.edges(data=True):
+    source, target, data = edge
+    length = data.get("length", 1)  # Default length is 1 if not specified
+    max_speed = data.get("max_speed", 1)  # Default max speed is 1 if not specified
+    label = f"Length: {length}\nMax Speed: {max_speed}"
+    nx.draw_networkx_edges(railway_network, pos, edgelist=[(source, target)], width=2, label=label)
+
+
+plt.show()
 
 
 
