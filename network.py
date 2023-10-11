@@ -143,20 +143,21 @@ def visualize_network(network):
     pos = nx.get_node_attributes(network, 'pos')
     labels = {node: node if network.nodes[node]['type'] != 'switch' else '' for node in network.nodes}
 
+    # Define the figure size
     plt.figure(figsize=(6, 12))
 
     # Draw nodes
-    node_size = [50 if network.nodes[node]['type'] == 'switch' else 400 for node in network.nodes]
+    node_size = [20 if network.nodes[node]['type'] == 'switch' else 200 for node in network.nodes]
     node_color = ['red' if network.nodes[node]['type'] == 'switch' else 'lightblue' for node in network.nodes]
     nx.draw_networkx_nodes(network, pos, node_size=node_size, node_color=node_color)
 
     # Draw edges
-    for edge in network.edges(data=True):
-        if edge[2]['type'] == 'track':
-            nx.draw_networkx_edges(network, pos, edgelist=[(edge[0], edge[1])], edge_color='gray')
+    #for edge in network.edges(data=True):
+    #    if edge[2]['type'] == 'track':
+    #        nx.draw_networkx_edges(network, pos, edgelist=[(edge[0], edge[1])], edge_color='gray')
 
-    edge_labels = {(edge[0], edge[1]): edge[2]['length'] for edge in network.edges(data=True) if
-                   edge[2]['type'] == 'track'}
+    #edge_labels = {(edge[0], edge[1]): edge[2]['length'] for edge in network.edges(data=True) if
+    #               edge[2]['type'] == 'track'}
 
     # Draw edges
     edge_labels = {}
@@ -175,7 +176,7 @@ def visualize_network(network):
                 source: (pos_source[0], pos_source[1] + offset),
                 target: (pos_target[0], pos_target[1] + offset)
             }
-            nx.draw_networkx_edges(network, pos_edge, edgelist=[(source, target)], edge_color='gray', width=1)
+            nx.draw_networkx_edges(network, pos_edge, edgelist=[(source, target)], edge_color='gray', width=1, connectionstyle='arc3, rad = 0.5')
 
     # Draw labels
     nx.draw_networkx_labels(network, pos, labels=labels, font_size=10, font_color='black')
@@ -188,3 +189,16 @@ def visualize_network(network):
     plt.savefig("railway_network.png")
 
     plt.show()
+
+def visualize_new(network):
+    pos = nx.get_node_attributes(network, 'pos')
+    nx.draw(network, pos, with_labels=True, connectionstyle='arc3, rad = 0.1')
+    edge_labels = dict([((u, v,), d['length']) for u, v, d in network.edges(data=True)])
+
+    plt.show()
+
+def visualize(network):
+    pos = nx.get_node_attributes(network, 'pos')
+    labels = {node: node if network.nodes[node]['type'] != 'switch' else '' for node in network.nodes}
+
+
