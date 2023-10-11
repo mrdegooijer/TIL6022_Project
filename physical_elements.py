@@ -4,11 +4,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-class STATION:
-    def __init__(self, name,  location, platforms):
-        self.name = name
-        self.location = location
-        self.platforms = platforms
+#class STATION:
+#    def __init__(self, name,  location, platforms):
+#        self.name = name
+#        self.location = location
+#        self.platforms = platforms
 
 
 class TRAIN:
@@ -22,66 +22,86 @@ class TRAIN:
 #        self.acceleration = acceleration
 #        self.deceleration = deceleration
 
-    def move(self):
+    def move(self, train_locations):
+
+        if self.location == "HS":
+            startlocation = "HS"
+        else:
+            start_locations = "R"
+# nu iets aan de code aan zien te passen waardoor de treinen van een bepaalde richting niet op hetzelfde spoor rijden als van een andere richting
+
         if self.route:
             next_station = self.route[0]
             distance_to_next_station = abs(next_station - self.location)
 
             if distance_to_next_station >= self.speed_distance:
-                self.location += self.speed_distance
+
+                #check if the new location is already used:
+                new_location = self.location + self.speed_distance
+                if new_location not in train_locations.values():
+                    self.location = new_location  # move train
+                    train_locations[self.train_id] = self.location
+                    print(f"Train {self.train_id} is at location {self.location} meters.")
+                else:
+                    print(f"Train {self.train_id} cannot move to location {new_location}.")
             else:
                 # The train arrives at next station
                 self.location = next_station
                 self.route.pop(0)
+                train_locations[self.train_id] = self.location
+                print(f"Train {self.train_id} arrived at {next_station} meters.")
+                #In deze situ hebben de stations onbeperkt peron capaciteit
 
     def increase_time(self):
         self.time += 10  # Increase time with 10 seconds
 
 #hierin uiteindelijk de stations plaatsen
-route_HS_IC = [500, 1500, 800] # in m
-route_HS_spr = [500, 1500, 800] # in m
-route_R_IC = [500, 1500, 800] # in m
-route_R_spr = [500, 1500, 800] # in m
+route_HS_IC = [500, 800, 1000] # in m
+route_HS_spr = [500, 800, 1000] # in m
+route_R_IC = [500, 800, 1000] # in m
+route_R_spr = [500, 800, 1000] # in m
 
+# Constraint toevoegen waardoor er niet meerdere treinen op dezelfde locatie kunnen zijn
 
 #train data:
-trains = ["HS", "R", "HS"] # start location
+start_locations = ["HS", "HS", "HS"] # start location
 traintype = ["IC", "IC", "IC"]
+train_locations = {0:0, 1:0, 2:0}
 
-# hierna misschien deze loop door de tijd heen laten loopen. Dan zou je alle treinen op die tijd aan kunnen roepen
 
+def train_creator():
+    trains = []
 
-# deze loop alleen voor de treinen de ene kant op. Een andere voor de andere kant op
-for train in range(len(trains)):
-    if trains[train] == "HS": # if the train from Den Haag HS to Rotterdam
+    for train in range(len(start_locations)):
         start_location = 0
-        if traintype[train] == "IC":
+        if start_locations[train] == "HS" and traintype[train] == "IC": # if the train from Den Haag HS to Rotterdam
             route = route_HS_IC
-        else:
+            speed_distance = 100 #Waardes hiervoor nog aanpassen
+        elif start_locations[train] == "HS" and traintype[train] == "spr":
             route = route_HS_spr
-    else:
-        start_location = 0
-        if traintype[train] == "IC":
-            route = route_HS_IC
+            speed_distance = 100 #Waardes hiervoor nog aanpassen
+        elif start_locations[train] == "R" and traintype[train] == "IC":
+            route = route_R_IC
+            speed_distance = 100 #Waardes hiervoor nog aanpassen
         else:
             route = route_R_spr
+            speed_distance = 100 #Waardes hiervoor nog aanpassen
 
-for _ in range(route_length):
-            next_station = random.choice(stations)
-            while next_station == route[-1]:
-                next_station = random.choice(stations)
-            route.append(next_station)
-        train_speed = random.randint(1, 3)  # Willekeurige snelheid
+        trains.append(TRAIN(train, traintype[train], start_location, route, speed_distance))
 
-        train = TRAIN(i, start_station, route, train_speed)
-        trains.append(train)
+    return trains
 
 
-def __init__(self, train_id, type, location, route, speed_distance):
+def run_simulation():
+    # Simulation steps:
+    num_steps = 10
+    trains = train_creator()
 
-# Simulation steps
-#num_steps = 10
-#for step in range(num_steps):
-#    for train in trains:
-#        train.move()
-#        train.increase_time()
+    for step in range(num_steps):
+        for train in trains:
+            train.move(train_locations)
+            train.increase_time()
+
+    return
+
+run_simulation()
