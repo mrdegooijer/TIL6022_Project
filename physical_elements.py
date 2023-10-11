@@ -67,6 +67,10 @@ railway_network.add_edge("Switch 6", "Moerwijk", length = 0.6, type = "track")
 railway_network.add_edge("Den Haag HS", "Switch 6", length = 1.4, type = "track")
 railway_network.add_edge("Den Haag HS", "Switch 6", length = 1.4, type = "track")
 
+    def move(self):
+        if self.route:
+            next_station = self.route[0]
+            distance_to_next_station = abs(next_station - self.location)
 
 #Creating the future situation
 railway_network_new = nx.DiGraph()
@@ -139,6 +143,8 @@ railway_network.add_edge("Moerdijk", "Switch 6", length = 0.6, type = "track")
 railway_network.add_edge("Den Haag HS", "Switch 6", length = 1.4, type = "track")
 railway_network.add_edge("Den Haag HS", "Switch 6", length = 1.4, type = "track")
 
+            if distance_to_next_station >= self.speed:
+                self.location += self.speed
 
 #Drawing the railway network
 pos = nx.spring_layout(railway_network)
@@ -151,9 +157,15 @@ for edge in railway_network.edges(data=True):
     label = f"Length: {length}\nMax Speed: {max_speed}"
     nx.draw_networkx_edges(railway_network, pos, edgelist=[(source, target)], width=2, label=label)
 
+            else:
+                # Train arrives at next station
+                self.location = next_station
+                self.route.pop(0)
 
 plt.show()
 
+    def increase_time(self):
+        self.time += 10  # increase time with 10 seconds
 
 
 
@@ -165,16 +177,41 @@ class STATION:
         self.platforms = platforms
 
 
+
 class TRAIN:
-    def __init__(self, train_id, type, location, destination, speed, acceleration, deceleration):
+    def __init__(self, train_id, type, location, route, speed_distance):
         self.train_id = train_id
         self.type = type
         self.location = location
-        self.direction = direction
-        self.speed = speed
-        self.acceleration = acceleration
-        self.deceleration = deceleration
+        self.route = route
+        self.speed_distance = speed_distance # speed in meter (per time step of 10s)
+        self.time = 0
+#        self.acceleration = acceleration
+#        self.deceleration = deceleration
+    def move(self):
+        if self.route:
+            next_station = self.route[0]
+            distance_to_next_station = abs(next_station - self.location)
 
+            if distance_to_next_station >= self.speed_distance:
+                self.location += self.speed_distance
+            else:
+                # The train arrives at next station
+                self.location = next_station
+                self.route.pop(0)
+    def increase_time(self):
+        self.time += 10  # Increase time with 10 seconds
+
+
+
+trains = [] #dit nog uitbreiden
+
+# Simulation steps
+num_steps = 10
+for step in range(num_steps):
+    for train in trains:
+        train.move()
+        train.increase_time()
 
 
 
