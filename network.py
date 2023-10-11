@@ -138,3 +138,53 @@ def railway_network_future():
     railway_network.add_edge("Den Haag HS", "Switch 6", length=1.4, type="track")
 
     return railway_network
+
+def visualize_network(network):
+    pos = nx.get_node_attributes(network, 'pos')
+    labels = {node: node if network.nodes[node]['type'] != 'switch' else '' for node in network.nodes}
+
+    plt.figure(figsize=(12, 6))
+
+    # Draw nodes
+    node_size = [50 if network.nodes[node]['type'] == 'switch' else 400 for node in network.nodes]
+    node_color = ['red' if network.nodes[node]['type'] == 'switch' else 'lightblue' for node in network.nodes]
+    nx.draw_networkx_nodes(network, pos, node_size=node_size, node_color=node_color)
+
+    # Draw edges
+    for edge in network.edges(data=True):
+        if edge[2]['type'] == 'track':
+            nx.draw_networkx_edges(network, pos, edgelist=[(edge[0], edge[1])], edge_color='gray')
+
+    edge_labels = {(edge[0], edge[1]): edge[2]['length'] for edge in network.edges(data=True) if
+                   edge[2]['type'] == 'track'}
+
+    # Draw edges
+    edge_labels = {}
+    edge_colors = []
+    for edge in network.edges(data=True):
+        if edge[2]['type'] == 'track':
+            source = edge[0]
+            target = edge[1]
+            edge_idx = list(network.edges(source, data=True)).index(edge)
+            offset = (edge_idx - len(network.edges(source)) / 2) * 0.1  # Adjust the offset value as needed
+            edge_labels[(source, target)] = edge[2]['length']
+            edge_colors.append('gray')
+            pos_source = pos[source]
+            pos_target = pos[target]
+            pos_edge = {
+                source: (pos_source[0], pos_source[1] + offset),
+                target: (pos_target[0], pos_target[1] + offset)
+            }
+            nx.draw_networkx_edges(network, pos_edge, edgelist=[(source, target)], edge_color='gray', width=1)
+
+    # Draw labels
+    nx.draw_networkx_labels(network, pos, labels=labels, font_size=10, font_color='black')
+    #nx.draw_networkx_edge_labels(network, pos, edge_labels=edge_labels, font_size=8, font_color='red')
+
+    plt.title("Railway Network")
+    plt.axis('off')
+
+    #Save the figure
+    plt.savefig("railway_network.png")
+
+    plt.show()
