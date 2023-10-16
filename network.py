@@ -71,8 +71,8 @@ def railway_network_future():
     # Add nodes - stations
     railway_network.add_node("Rotterdam Centraal", pos=(0, 0), platforms=4, type="station")
     railway_network.add_node("Schiedam Centrum", pos=(0, 4000), platforms=4, type="station")
-    railway_network.add_node("Delft Campus", pos=(0, 12500), platforms=2, type="station")
-    railway_network.add_node("Delft", pos=(0, 14400), platforms=2, type="station")
+    railway_network.add_node("Delft Campus", pos=(0, 12500), platforms=4, type="station")
+    railway_network.add_node("Delft", pos=(0, 14400), platforms=4, type="station")
     railway_network.add_node("Rijswijk", pos=(0, 18700), platforms=4, type="station")
     railway_network.add_node("Moerwijk", pos=(0, 20600), platforms=4, type="station")
     railway_network.add_node("Den Haag HS", pos=(0, 22600), platforms=4, type="station")
