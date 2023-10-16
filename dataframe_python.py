@@ -14,7 +14,11 @@ traject_2022 = data2[data2['rdt_lines_id'] == '11']
 
 
 
-fig1 = px.pie(traject_2021, values='duration_minutes', names='cause_en', title='taart test')
-fig2 = px.pie(traject_2022, values='duration_minutes', names='cause_en', title='taart test')
+fig1 = px.pie(traject_2021, values='duration_minutes', names='cause_en')
+fig2 = px.pie(traject_2022, values='duration_minutes', names='cause_en')
+
+fig1.update_layout(title_text='Delays by cause 2021', title_x=0.5)
+fig2.update_layout(title_text='Delays by cause 2022',title_x=0.5)
+
 fig1.show()
 fig2.show()
