@@ -181,6 +181,7 @@ def visualize_network(network):
     nx.draw_networkx_labels(network, pos, labels=labels, font_size=10, font_color='black')
     #nx.draw_networkx_edge_labels(network, pos, edge_labels=edge_labels, font_size=8, font_color='red')
 
+
     plt.title("Railway Network")
     plt.axis('off')
 
