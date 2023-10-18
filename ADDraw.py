@@ -1,4 +1,4 @@
-pip install holoviews
+import networkx as nx
 import holoviews as hv
 
 def draw(network):
