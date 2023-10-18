@@ -33,10 +33,10 @@ def railway_network_current():
     railway_network.add_node("Schiedam Centrum 4", pos=(-15, 4000), type="platform")
 
     railway_network.add_node("Delft Campus 1", pos=(5, 12500), type="platform")
-    railway_network.add_node("Delft Campus 2", pos=(-5, 12500), type="platform")
+    railway_network.add_node("Delft Campus 3", pos=(-5, 12500), type="platform")
 
     railway_network.add_node("Delft 1", pos=(5, 14400), type="platform")
-    railway_network.add_node("Delft 2", pos=(-5, 14400), type="platform")
+    railway_network.add_node("Delft 3", pos=(-5, 14400), type="platform")
 
     railway_network.add_node("Rijswijk 1", pos=(15, 18700), type="platform")
     railway_network.add_node("Rijswijk 2", pos=(5, 18700), type="platform")
@@ -65,10 +65,10 @@ def railway_network_current():
     railway_network.add_node("Switch 2 4", pos=(-15, 4500), type="vswitch")
 
     railway_network.add_node("Switch 3 1", pos=(5, 11000), type="vswitch")
-    railway_network.add_node("Switch 3 2", pos=(-5, 11000), type="vswitch")
+    railway_network.add_node("Switch 3 3", pos=(-5, 11000), type="vswitch")
 
     railway_network.add_node("Switch 4 1", pos=(5, 12800), type="vswitch")
-    railway_network.add_node("Switch 4 2", pos=(-5, 12800), type="vswitch")
+    railway_network.add_node("Switch 4 3", pos=(-5, 12800), type="vswitch")
 
     railway_network.add_node("Switch 5 1", pos=(15, 16900), type="vswitch")
     railway_network.add_node("Switch 5 2", pos=(5, 16900), type="vswitch")
@@ -201,7 +201,7 @@ def railway_network_future():
 
 def visualize_2(network):
     pos = nx.get_node_attributes(network, 'pos')
-    #labels = {node: node if network.nodes[node]['type'] != 'switch' else '' for node in network.nodes}
+    labels = {node: node if network.nodes[node]['type'] != 'switch' else '' for node in network.nodes}
 
     # Define the figure size
     plt.figure(figsize=(6, 12))
@@ -330,3 +330,15 @@ def visualize(network):
 
     plt.title("Network Visualization")
     plt.show()
+
+
+def check_type(network):
+    default_node_type = 'unknown'
+    G = network
+    for node in G.nodes:
+        node_type = G.nodes[node].get('type', 'unknown')
+        print(f"Node {node}: Type = {node_type}")
+    return
+
+
+
