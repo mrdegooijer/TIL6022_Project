@@ -39,10 +39,10 @@ def draw(network):
 def sim(network, pos_param, train_locations):
     #Activate bokeh backend
     hv.extension('bokeh')
-
+    test = [(0, 0, 0), (0, 14400, 0), (0, 20600, 0)]
     print(pos_param)
     #Create a holoviews graph from the networkx graph
-    graph = hv.Graph.from_networkx(network, pos_param)
+    graph = hv.Graph.from_networkx(network, [(0, 0, 0), (0, 14400, 0), (0, 20600, 0)])
 
     #Define a node position dictionary to use for the trains
     trains = hv.Points(train_locations, vdims=['train_id', 'location']) #or kdims=['x', 'y']
@@ -98,8 +98,8 @@ def get_3d_pos(network):
     :param network: networkx graph 3D
     :return: list of 3D positions
     """
-    pos = []
+    pos_dict = {}
     for node in network.nodes:
-        pos.append(network.nodes[node]['pos'])
+        pos_dict[node] = network.nodes[node]['pos']
 
-    return pos
+    return pos_dict

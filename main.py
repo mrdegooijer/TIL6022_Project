@@ -8,9 +8,9 @@ if __name__ == '__main__':
     #visualize_2(railway_network)
 
     from ADDraw import draw, sim, Convert_to_3D, get_3d_pos
-    network3d = Convert_to_3D(railway_network)
-    positions = get_3d_pos(network3d)
-    sim(network3d, positions, train_locations = [(5, 200, 0), (5, 10000, 0), (15, 14000, 0)])
+    #network3d = Convert_to_3D(railway_network)
+    positions = get_3d_pos(railway_network)
+    sim(railway_network, positions, train_locations = [(5, 200, 0), (5, 10000, 0), (15, 14000, 0)])
 
 
 
