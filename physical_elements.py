@@ -99,7 +99,7 @@ route_R_spr = [railway_network.nodes["Rotterdam Centraal"].get("pos")[1], railwa
 #train data:
 start_locations = ["R", "R", "R"]  # Determine the start location of each train. R is for trains from Rotterdam to Den Haag HS and HS is for trains in the other direction.
 traintype = ["IC", "IC", "IC"]  # Determine the train type of all trains (IC or spr)
-dep_time = [0, 1, 0]  # set departure time, in timesteps of 10 seconds
+dep_time = [0, 10, 50]  # set departure time, in timesteps of 10 seconds
 
 # dictionary with locations of trains within track.
 # These are used to keep track of the current location of each train.
@@ -187,6 +187,7 @@ def data_converter(track_1, track_2, track_3, track_4):
     data.extend(single_train(track_3, 5))
     data.extend(single_train(track_4, 15))
     return (data)
+
 
 # print the output
 print(run_simulation())
