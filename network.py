@@ -22,7 +22,7 @@ def railway_network_current():
     railway_network.add_node("Switch 6", pos=(0, 21200), type="switch")
 
     # Add invisible nodes - platforms
-    railway_network.add_node("Rotterdam Centraal 1", pos=(15, 0), type="platform")
+    railway_network.add_node("Rotterdam Centraal1", pos=(15, 0), type="platform")
     railway_network.add_node("Rotterdam Centraal 2", pos=(5, 0), type="platform")
     railway_network.add_node("Rotterdam Centraal 3", pos=(-5, 0), type="platform")
     railway_network.add_node("Rotterdam Centraal 4", pos=(-15, 0), type="platform")
