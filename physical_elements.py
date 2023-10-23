@@ -188,4 +188,5 @@ def data_converter(track_1, track_2, track_3, track_4):
     data.extend(single_train(track_4, 15))
     return (data)
 
+# print the output
 print(run_simulation())
