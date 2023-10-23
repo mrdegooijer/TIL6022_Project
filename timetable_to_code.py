@@ -28,11 +28,12 @@ Rdam_HS_table = r'https://github.com/mrdegooijer/TIL6022_Project/blob/main/Data/
 
 url_Rdam = f'https://raw.githubusercontent.com/{username}/{repository}/{branch}/{Data/Departures_Rdam_to_HS.xlsx}'
     
-    try:
-        response = requests.get(url_Rdam)
-        response.raise_for_status()  # Check if the request was successful
-        content = response.text
-        return content
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching file from GitHub: {e}")
-        return None
+try:
+    response = requests.get(url_Rdam)
+    response.raise_for_status()  # Check if the request was successful
+    content = response.text
+return content
+
+except requests.exceptions.RequestException as e:
+    print(f"Error fetching file from GitHub: {e}")
+    return None
