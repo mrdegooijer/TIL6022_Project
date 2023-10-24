@@ -71,23 +71,27 @@ class TRAIN:
             else:
                 # The train arrives at next station
                 self.location = next_station
-                self.route.pop(0)
+                self.route = self.route[1:]
 
                 if self.track == 1:
-                    track_1[self.train_id] = self.location
+                    self.station_reached(track_1)
                 elif self.track == 2:
-                    track_2[self.train_id] = self.location
+                    self.station_reached(track_2)
                 elif self.track == 3:
-                    track_3[self.train_id] = self.location
+                    self.station_reached(track_3)
                 else:
-                    track_4[self.train_id] = self.location
+                    self.station_reached(track_4)
 
                 print(f"Train {self.train_id} arrived at {next_station} meters.")
 
+    def station_reached(self, track_name):  # This function is used if a train reaches a station. If the station is the end-station, the train is removed from its dictionary.
+        if self.route:  # Self.route gives the value true if the train didn't reach the end station
+           track_name[self.train_id] = self.location
+        else:  # In the case that the train already reach the end station, the value is deleted from the dictionary
+            del track_name[self.train_id]
+
 # In this sitution, we assume unlimited platform capacity
 
-#    def increase_time(self):
-#        self.time += 10  # Increase time with 10 seconds
 
 
 route_HS_IC = [railway_network.nodes["Den Haag HS"].get("pos")[1], railway_network.nodes["Delft"].get("pos")[1], railway_network.nodes["Rotterdam Centraal"].get("pos")[1]] # in m
@@ -99,7 +103,7 @@ route_R_spr = [railway_network.nodes["Rotterdam Centraal"].get("pos")[1], railwa
 #train data:
 start_locations = ["R", "R", "R"]  # Determine the start location of each train. R is for trains from Rotterdam to Den Haag HS and HS is for trains in the other direction.
 traintype = ["IC", "IC", "IC"]  # Determine the train type of all trains (IC or spr)
-dep_time = [0, 10, 50]  # set departure time, in timesteps of 10 seconds
+dep_time = [0, 0, 0]  # set departure time, in timesteps of 10 seconds
 
 # dictionary with locations of trains within track.
 # These are used to keep track of the current location of each train.
