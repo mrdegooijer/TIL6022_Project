@@ -1,6 +1,7 @@
 import networkx as nx
 import holoviews as hv
 from bokeh.models import HoverTool, Button
+import matplotlib.pyplot as plt
 
 def simulate(network, positions, train_locations):
     """
@@ -12,8 +13,11 @@ def simulate(network, positions, train_locations):
     """
     #Activate bokeh backend
     hv.extension('bokeh')
+
     #Create a holoviews graph from the networkx graph
-    graph = hv.Graph.from_networkx(network, positions)
+    graph = hv.Graph.from_networkx(network, positionsk, nodes=)
+
+    # print("vov", graph.data)
     #Define a node position dictionary to use for the trains
     trains = hv.Points(train_locations, kdims=['x', 'y'])
 
@@ -33,53 +37,6 @@ def simulate(network, positions, train_locations):
     map = hv.HoloMap(train_dict, kdims='Timestep')
     #view = map + graph
     return graph
-
-def sim(network, pos_param, train_locations):
-    #Activate bokeh backend
-    hv.extension('bokeh')
-    # test = {(0, 0): 0, (0, 14400): 0, (0, 20600): 0}
-    test2 = {'a': (0, 0), 'b': (0, 14400), 'c': (0, 20600)}
-    # print(len(pos_param['0']))
-    # print(len(test2['a']))
-    print(dict_dims(pos_param), dict_dims(test2))
-    print(pos_param)
-    # print(pos_param['Rotterdam Centraal'], pos_param['Schiedam Centrum'])
-    #Create a holoviews graph from the networkx graph
-    graph = hv.Graph.from_networkx(network, pos_param)
-
-    #Define a node position dictionary to use for the trains
-    #trains = hv.Points(train_locations, vdims=['train_id', 'location']) #or kdims=['x', 'y']
-    trains_test = hv.Points([(5, 200, 0), (5, 10000, 0), (15, 14000, 0)], vdims=['train_id', 'location'])
-
-    #Define a hovertool to show the train_id and location
-    hover = HoverTool(tooltips=[('train_id', '@train_id'), ('location', '@location')])
-    # graph.opts(
-    #     node_size=10,
-    #     node_color='blue',
-    #     edge_color='black',
-    #     directed=True,
-    #     arrowhead_length=0.01,
-    #     arrowhead_angle=0,
-    #     width=800,
-    #     height=800,
-    #     padding=0.1,
-    #     xaxis=None,
-    #     yaxis=None,
-    #     show_frame=False,
-    #     show_grid=False,
-    #     show_legend=False,
-    #     title='Railway Network',
-    #     fontsize={'title': 16, 'labels': 12, 'xticks': 8, 'yticks': 8}
-    # )
-
-    graph_with_trains = graph * trains_test
-
-    #Define a button to start the simulation
-    button = Button(label="Start Simulation", button_type="success")
-
-    #Create a dynamic map to update the train locations
-    dynamic_plot = hv.DynamicMap(graph_with_trains, streams=[hv.streams.PlotReset(), hv.streams.PlotSize(), hv.streams.RangeXY(), hv.streams.Stream.define('NextFrame', None)()])
-    layout = button + dynamic_plot
 
 
 def Convert_to_3D(network, z=0):
@@ -113,9 +70,14 @@ def get_node_dict(network):
     :param network: networkx graph
     :return: dictionary with nodes and coordinates
     """
+
+    #print(network.nodes)
     node_dict = {}
     for (i, node) in enumerate(network.nodes):
-        node_dict['n{}'.format(i)] = network.nodes[node]['pos']
+        try:
+            node_dict['n{}'.format(i)] = network.nodes[node]['pos']
+        except:
+            print(node)
 
     return node_dict
 

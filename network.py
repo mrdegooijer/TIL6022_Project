@@ -126,6 +126,130 @@ def railway_network_current():
 
     return railway_network
 
+def railway_network_current_holo():
+    railway_network = nx.DiGraph()
+
+    # Add nodes - stations
+    railway_network.add_node("Rotterdam Centraal", platforms=4, type="station")
+    railway_network.add_node("Schiedam Centrum", platforms=4, type="station")
+    railway_network.add_node("Delft Campus", platforms=2, type="station")
+    railway_network.add_node("Delft", platforms=2, type="station")
+    railway_network.add_node("Rijswijk", platforms=4, type="station")
+    railway_network.add_node("Moerwijk", platforms=4, type="station")
+    railway_network.add_node("Den Haag HS", platforms=4, type="station")
+
+    # Add nodes - switches
+    railway_network.add_node("Switch 1", type="switch")
+    railway_network.add_node("Switch 2", type="switch")
+    railway_network.add_node("Switch 3", type="switch")
+    railway_network.add_node("Switch 4", type="switch")
+    railway_network.add_node("Switch 5", type="switch")
+    railway_network.add_node("Switch 6", type="switch")
+
+    # Add invisible nodes - platforms
+    railway_network.add_node("Rotterdam Centraal 1", type="platform")
+    railway_network.add_node("Rotterdam Centraal 2", type="platform")
+    railway_network.add_node("Rotterdam Centraal 3", type="platform")
+    railway_network.add_node("Rotterdam Centraal 4", type="platform")
+
+    railway_network.add_node("Schiedam Centrum 1", type="platform")
+    railway_network.add_node("Schiedam Centrum 2", type="platform")
+    railway_network.add_node("Schiedam Centrum 3", type="platform")
+    railway_network.add_node("Schiedam Centrum 4", type="platform")
+
+    railway_network.add_node("Delft Campus 1", type="platform")
+    railway_network.add_node("Delft Campus 3", type="platform")
+
+    railway_network.add_node("Delft 1", type="platform")
+    railway_network.add_node("Delft 3", type="platform")
+
+    railway_network.add_node("Rijswijk 1", type="platform")
+    railway_network.add_node("Rijswijk 2", type="platform")
+    railway_network.add_node("Rijswijk 3", type="platform")
+    railway_network.add_node("Rijswijk 4", type="platform")
+
+    railway_network.add_node("Moerwijk 1", type="platform")
+    railway_network.add_node("Moerwijk 2", type="platform")
+    railway_network.add_node("Moerwijk 3", type="platform")
+    railway_network.add_node("Moerwijk 4", type="platform")
+
+    railway_network.add_node("Den Haag HS 1", type="platform")
+    railway_network.add_node("Den Haag HS 2", type="platform")
+    railway_network.add_node("Den Haag HS 3", type="platform")
+    railway_network.add_node("Den Haag HS 4", type="platform")
+
+    # Add invisible nodes - switches
+    railway_network.add_node("Switch 1 1", type="vswitch")
+    railway_network.add_node("Switch 1 2", type="vswitch")
+    railway_network.add_node("Switch 1 3", type="vswitch")
+    railway_network.add_node("Switch 1 4", type="vswitch")
+
+    railway_network.add_node("Switch 2 1", type="vswitch")
+    railway_network.add_node("Switch 2 2", type="vswitch")
+    railway_network.add_node("Switch 2 3", type="vswitch")
+    railway_network.add_node("Switch 2 4", type="vswitch")
+
+    railway_network.add_node("Switch 3 1", type="vswitch")
+    railway_network.add_node("Switch 3 3", type="vswitch")
+
+    railway_network.add_node("Switch 4 1", type="vswitch")
+    railway_network.add_node("Switch 4 3", type="vswitch")
+
+    railway_network.add_node("Switch 5 1", type="vswitch")
+    railway_network.add_node("Switch 5 2", type="vswitch")
+    railway_network.add_node("Switch 5 3", type="vswitch")
+    railway_network.add_node("Switch 5 4", type="vswitch")
+
+    railway_network.add_node("Switch 6 1", type="vswitch")
+    railway_network.add_node("Switch 6 2", type="vswitch")
+    railway_network.add_node("Switch 6 3", type="vswitch")
+    railway_network.add_node("Switch 6 4", type="vswitch")
+
+    # Add edges - Rotterdam to HS
+    railway_network.add_edge("Rotterdam Centraal 1", "Switch 1 1", length=2100, type="track1")
+    railway_network.add_edge("Rotterdam Centraal 2", "Switch 1 2", length=2100, type="track2")
+    railway_network.add_edge("Switch 1 1", "Schiedam Centrum 1", length=1900, type="track1")
+    railway_network.add_edge("Switch 1 2", "Schiedam Centrum 2", length=1900, type="track2")
+    railway_network.add_edge("Schiedam Centrum 1", "Switch 2 1", length=400, type="track1")
+    railway_network.add_edge("Schiedam Centrum 2", "Switch 2 2", length=400, type="track2")
+    # railway_network.add_edge("Switch 2 1", "Switch 2 2", length=10, type="track1")
+    railway_network.add_edge("Switch 2 2", "Switch 3 1", length=6500, type="track1")
+    railway_network.add_edge("Switch 3 1", "Delft Campus 1", length=1500, type="track1")
+    railway_network.add_edge("Delft Campus 1", "Switch 4 1", length=300, type="track1")
+    railway_network.add_edge("Switch 4 1", "Delft 1", length=1600, type="track1")
+    railway_network.add_edge("Delft 1", "Switch 5 2", length=2500, type="track1")
+    railway_network.add_edge("Switch 5 1", "Rijswijk 1", length=1800, type="track1")
+    railway_network.add_edge("Switch 5 2", "Rijswijk 2", length=1800, type="track2")
+    railway_network.add_edge("Rijswijk 1", "Moerwijk 1", length=1900, type="track1")
+    railway_network.add_edge("Rijswijk 2", "Moerwijk 2", length=1900, type="track2")
+    railway_network.add_edge("Moerwijk 1", "Switch 6 1", length=600, type="track1")
+    railway_network.add_edge("Moerwijk 2", "Switch 6 2", length=600, type="track2")
+    railway_network.add_edge("Switch 6 1", "Den Haag HS 1", length=1400, type="track1")
+    railway_network.add_edge("Switch 6 2", "Den Haag HS 2", length=1400, type="track2")
+
+    # Add edges - HS to Rotterdam
+    railway_network.add_edge("Switch 1 3", "Rotterdam Centraal 3", length=2100, type="track3")
+    railway_network.add_edge("Switch 1 4", "Rotterdam Centraal 4", length=2100, type="track4")
+    railway_network.add_edge("Schiedam Centrum 3", "Switch 1 3", length=1900, type="track3")
+    railway_network.add_edge("Schiedam Centrum 4", "Switch 1 4", length=1900, type="track4")
+    railway_network.add_edge("Switch 2 3", "Schiedam Centrum 3", length=400, type="track3")
+    railway_network.add_edge("Switch 2 4", "Schiedam Centrum 4", length=400, type="track4")
+    railway_network.add_edge("Switch 3 3", "Switch 2 3", length=6500, type="track3")
+    railway_network.add_edge("Delft Campus 3", "Switch 3 3", length=1500, type="track3")
+    railway_network.add_edge("Switch 4 3", "Delft Campus 3", length=300, type="track3")
+    railway_network.add_edge("Delft 3", "Switch 4 3", length=1600, type="track3")
+    railway_network.add_edge("Switch 5 3", "Delft 3", length=2500, type="track3")
+    railway_network.add_edge("Rijswijk 3", "Switch 5 3", length=1800, type="track3")
+    railway_network.add_edge("Rijswijk 4", "Switch 5 4", length=1800, type="track4")
+    railway_network.add_edge("Moerwijk 3", "Rijswijk 3", length=1900, type="track3")
+    railway_network.add_edge("Moerwijk 4", "Rijswijk 4", length=1900, type="track4")
+    railway_network.add_edge("Switch 6 3", "Moerwijk 3", length=600, type="track3")
+    railway_network.add_edge("Switch 6 4", "Moerwijk 4", length=600, type="track4")
+    railway_network.add_edge("Den Haag HS 3", "Switch 6 3", length=1400, type="track3")
+    railway_network.add_edge("Den Haag HS 4", "Switch 6 4", length=1400, type="track4")
+
+    return railway_network
+
 def railway_network_future():
     railway_network = nx.DiGraph()
 
