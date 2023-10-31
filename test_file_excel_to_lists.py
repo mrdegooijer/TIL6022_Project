@@ -36,9 +36,9 @@ traintypes = alltrains_sorted[alltrains_sorted.columns[1]].tolist()
 start_locations = alltrains_sorted[alltrains_sorted.columns[2]].tolist()
 
 # Print the list
-print(deptimes_alltrains)
-print(traintypes)
-print(start_locations)
+# print(deptimes_alltrains)
+# print(traintypes)
+# print(start_locations)
 
 reference_time = pd.to_datetime('16:00:00', format='%H:%M:%S')
 
@@ -60,4 +60,32 @@ steps = (time_diff_seconds / step_duration_seconds).astype(int)
 
 departure_steps = steps.tolist()
 
+#print(deptimes_alltrains)
 print(departure_steps)
+print(traintypes)
+print(start_locations)
+
+track_1= { }
+track_2= { }
+track_3= { }
+track_4= { }
+
+for i, (train_type, start_location) in enumerate(zip(traintypes, start_locations)):
+    if train_type == 'IC':
+        if start_location == 'R':
+            track_1[i] = 0
+        elif start_location == 'HS':
+            track_3[i] = 250 #aanpassen naar eindafstand
+    elif train_type == 'spr':
+        if start_location == 'R':
+            track_2[i] = 0
+        elif start_location == 'HS':
+            track_4[i] = 250 #aanpassen naar eindafstand
+
+print("Track 1 (IC trains with start_location 'R'):", track_1)
+print("Track 2 (spr trains with start_location 'R'):", track_2)
+print("Track 3 (IC trains with start_location 'HS'):", track_3)
+print("Track 4 (spr trains with start_location 'HS'):", track_4)
+
+
+
