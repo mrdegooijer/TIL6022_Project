@@ -17,41 +17,47 @@ Rdam_HS_table = f'https://raw.githubusercontent.com/{username}/{repository}/{bra
 df_HS_Rdam = pd.read_excel(HS_Rdam_table, sheet_name='dep_times')
 df_Rdam_HS = pd.read_excel(Rdam_HS_table, sheet_name='dep_times')
 
-# Print the DataFrame
-print(df_HS_Rdam)
-
-# Reverse the order of columns in df_Rdam_HS
-df_Rdam_HS = df_Rdam_HS.iloc[:, ::-1]
-#print(df_Rdam_HS)
-
-#df_HS_Rdam_sorted = df_HS_Rdam.sort_values(by=df_HS_Rdam.columns[0])
-#df_Rdam_HS_sorted = df_Rdam_HS.sort_values(by=df_Rdam_HS.columns[7])
-
 # Concatenate the sorted DataFrames
-alltrains_df = pd.concat([df_HS_Rdam, df_Rdam_HS])
-alltrains_sorted = alltrains_df.sort_values(by=alltrains_df.columns[1])
+frames = [df_HS_Rdam, df_Rdam_HS]
+alltrains_df = pd.concat(frames)
+alltrains_sorted = alltrains_df.sort_values(by=alltrains_df.columns[0])
 # Print the combined and sorted DataFrame
 print(alltrains_sorted)
 
-deptimes_HS = df_HS_Rdam[df_HS_Rdam.columns[1]].tolist()
+deptimes_alltrains = alltrains_sorted[alltrains_sorted.columns[0]].tolist()
 
 # Convert the list elements to datetime format
-deptimes_HS = pd.to_datetime(deptimes_HS, format='%H:%M:%S')
+deptimes_alltrains = pd.to_datetime(deptimes_alltrains, format='%H:%M:%S', errors='coerce')
 
 # Format the datetime objects as strings (HH:MM:SS)
-deptimes_HS = deptimes_HS.strftime('%H:%M:%S').tolist()
+deptimes_alltrains = deptimes_alltrains.strftime('%H:%M:%S').tolist()
 
-traintype_HS = df_HS_Rdam[df_HS_Rdam.columns[2]].tolist()
+traintypes = alltrains_sorted[alltrains_sorted.columns[1]].tolist()
+start_locations = alltrains_sorted[alltrains_sorted.columns[2]].tolist()
 
 # Print the list
-print(deptimes_HS)
-print(traintype_HS)
+print(deptimes_alltrains)
+print(traintypes)
+print(start_locations)
 
 reference_time = pd.to_datetime('16:00:00', format='%H:%M:%S')
 
 # Print only the time part
-print(reference_time.strftime('%H:%M:%S'))
+print("reference time is ", reference_time.strftime('%H:%M:%S'))
 
-start_location = ["HS"] * len(traintype_HS)
+# Convert the list elements to datetime format
+deptimes_alltrains = pd.to_datetime(deptimes_alltrains, format='%H:%M:%S')
 
-print(start_location)
+# Set the start time
+start_time = pd.to_datetime('16:00:00', format='%H:%M:%S')
+
+# Calculate the time difference in seconds
+time_diff_seconds = (deptimes_alltrains - start_time).total_seconds()
+
+# Convert time difference to steps (assuming each step is 30 seconds)
+step_duration_seconds = 30
+steps = (time_diff_seconds / step_duration_seconds).astype(int)
+
+departure_steps = steps.tolist()
+
+print(departure_steps)
