@@ -142,7 +142,6 @@ class TRAIN:
 
                     self.switches = self.switches[1:]
 
-
                 elif self.track == 3:
                     if self.double_track():  # gives True if there is double track after the switch
                         if any((self.location + distance * self.speed_distance) <= value <= self.location for value in track_4.values()):
