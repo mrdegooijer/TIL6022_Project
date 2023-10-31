@@ -1,5 +1,3 @@
-#import subprocess
-#subprocess.call(['pip', 'install', 'pandas', 'openpyxl'])
 import pandas as pd
 from datetime import datetime
 
