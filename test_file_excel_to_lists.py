@@ -19,15 +19,19 @@ df_Rdam_HS = pd.read_excel(Rdam_HS_table)
 
 # Print the DataFrame
 print(df_HS_Rdam)
+
+# Reverse the order of columns in df_Rdam_HS
+df_Rdam_HS = df_Rdam_HS.iloc[:, ::-1]
 print(df_Rdam_HS)
 
-alltrains_df = pd.concat([df_HS_Rdam, df_Rdam_HS])
-print(alltrains_df)
-# Sort the concatenated DataFrame by its first column
-sorted_df = alltrains_df.sort_values(by=alltrains_df.columns[0])
+df_HS_Rdam_sorted = df_HS_Rdam.sort_values(by=df_HS_Rdam.columns[0])
+df_Rdam_HS_sorted = df_Rdam_HS.sort_values(by=df_Rdam_HS.columns[7])
 
-# Print the sorted DataFrame
-print(sorted_df)
+# Concatenate the sorted DataFrames
+alltrains_df = pd.concat([df_HS_Rdam_sorted, df_Rdam_HS_sorted])
+alltrains_sorted = alltrains_df.sort_values(by=alltrains_df.columns[0])
+# Print the combined and sorted DataFrame
+print(alltrains_sorted)
 
 deptimes_HS = df_HS_Rdam[df_HS_Rdam.columns[0]].tolist()
 
