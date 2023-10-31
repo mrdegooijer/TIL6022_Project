@@ -73,12 +73,12 @@ for i, (train_type, start_location) in enumerate(zip(traintypes, start_locations
         if start_location == 'R':
             track_1[i] = 0
         elif start_location == 'HS':
-            track_3[i] = 250 #aanpassen naar eindafstand
+            track_3[i] = 22600 #aanpassen naar eindafstand
     elif train_type == 'spr':
         if start_location == 'R':
             track_2[i] = 0
         elif start_location == 'HS':
-            track_4[i] = 250 #aanpassen naar eindafstand
+            track_4[i] = 22600 #aanpassen naar eindafstand
 
 print("Track 1 (IC trains with start_location 'R'):", track_1)
 print("Track 2 (spr trains with start_location 'R'):", track_2)
