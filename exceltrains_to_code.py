@@ -20,70 +20,81 @@ frames = [df_HS_Rdam, df_Rdam_HS]
 alltrains_df = pd.concat(frames)
 alltrains_sorted = alltrains_df.sort_values(by=alltrains_df.columns[0])
 # Print the combined and sorted DataFrame
-print(alltrains_sorted)
+#print(alltrains_sorted)
 
-deptimes_alltrains = alltrains_sorted[alltrains_sorted.columns[0]].tolist()
+def get_train_data():
+    deptimes_alltrains = alltrains_sorted[alltrains_sorted.columns[0]].tolist()
 
-# Convert the list elements to datetime format
-deptimes_alltrains = pd.to_datetime(deptimes_alltrains, format='%H:%M:%S', errors='coerce')
+    # Convert the list elements to datetime format
+    deptimes_alltrains = pd.to_datetime(deptimes_alltrains, format='%H:%M:%S', errors='coerce')
 
-# Format the datetime objects as strings (HH:MM:SS)
-deptimes_alltrains = deptimes_alltrains.strftime('%H:%M:%S').tolist()
+    # Format the datetime objects as strings (HH:MM:SS)
+    deptimes_alltrains = deptimes_alltrains.strftime('%H:%M:%S').tolist()
 
-traintypes = alltrains_sorted[alltrains_sorted.columns[1]].tolist()
-start_locations = alltrains_sorted[alltrains_sorted.columns[2]].tolist()
+    traintypes = alltrains_sorted[alltrains_sorted.columns[1]].tolist()
+    start_locations = alltrains_sorted[alltrains_sorted.columns[2]].tolist()
 
-# Print the list
-# print(deptimes_alltrains)
-# print(traintypes)
-# print(start_locations)
+    # Print the list
+    # print(deptimes_alltrains)
+    # print(traintypes)
+    # print(start_locations)
 
-reference_time = pd.to_datetime('16:00:00', format='%H:%M:%S')
+    reference_time = pd.to_datetime('16:00:00', format='%H:%M:%S')
 
-# Print only the time part
-print("reference time is ", reference_time.strftime('%H:%M:%S'))
+    # Print only the time part
+    print("reference time is ", reference_time.strftime('%H:%M:%S'))
 
-# Convert the list elements to datetime format
-deptimes_alltrains = pd.to_datetime(deptimes_alltrains, format='%H:%M:%S')
+    # Convert the list elements to datetime format
+    deptimes_alltrains = pd.to_datetime(deptimes_alltrains, format='%H:%M:%S')
 
-# Set the start time
-start_time = pd.to_datetime('16:00:00', format='%H:%M:%S')
+    # Set the start time
+    start_time = pd.to_datetime('16:00:00', format='%H:%M:%S')
 
-# Calculate the time difference in seconds
-time_diff_seconds = (deptimes_alltrains - start_time).total_seconds()
+    # Calculate the time difference in seconds
+    time_diff_seconds = (deptimes_alltrains - start_time).total_seconds()
 
-# Convert time difference to steps (assuming each step is 30 seconds)
-step_duration_seconds = 30
-steps = (time_diff_seconds / step_duration_seconds).astype(int)
+    # Convert time difference to steps (assuming each step is 30 seconds)
+    step_duration_seconds = 30
+    steps = (time_diff_seconds / step_duration_seconds).astype(int)
 
-departure_steps = steps.tolist()
+    departure_steps = steps.tolist()
 
-#print(deptimes_alltrains)
-print(departure_steps)
-print(traintypes)
-print(start_locations)
+    #print(deptimes_alltrains)
+    print(departure_steps)
+    print(traintypes)
+    print(start_locations)
 
-track_1= { }
-track_2= { }
-track_3= { }
-track_4= { }
+    track_1= { }
+    track_2= { }
+    track_3= { }
+    track_4= { }
 
-for i, (train_type, start_location) in enumerate(zip(traintypes, start_locations)):
-    if train_type == 'IC':
-        if start_location == 'R':
-            track_1[i] = 0
-        elif start_location == 'HS':
-            track_3[i] = 22600 #aanpassen naar eindafstand
-    elif train_type == 'spr':
-        if start_location == 'R':
-            track_2[i] = 0
-        elif start_location == 'HS':
-            track_4[i] = 22600 #aanpassen naar eindafstand
+    for i, (train_type, start_location) in enumerate(zip(traintypes, start_locations)):
+        if train_type == 'IC':
+            if start_location == 'R':
+                track_1[i] = 0
+            elif start_location == 'HS':
+                track_3[i] = 22600 # end distance of tracks
+        elif train_type == 'spr':
+            if start_location == 'R':
+                track_2[i] = 0
+            elif start_location == 'HS':
+                track_4[i] = 22600 # end distance of tracks
 
-print("Track 1 (IC trains with start_location 'R'):", track_1)
-print("Track 2 (spr trains with start_location 'R'):", track_2)
-print("Track 3 (IC trains with start_location 'HS'):", track_3)
-print("Track 4 (spr trains with start_location 'HS'):", track_4)
+    # print("Track 1 (IC trains with start_location 'R'):", track_1)
+    # print("Track 2 (spr trains with start_location 'R'):", track_2)
+    # print("Track 3 (IC trains with start_location 'HS'):", track_3)
+    # print("Track 4 (spr trains with start_location 'HS'):", track_4)
+
+    return {
+        'departure_steps': departure_steps,
+        'traintypes': traintypes,
+        'start_locations': start_locations,
+        'track_1': track_1,
+        'track_2': track_2,
+        'track_3': track_3,
+        'track_4': track_4
+    }
 
 
-
+get_train_data()
