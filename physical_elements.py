@@ -1,17 +1,93 @@
-#in this python file we will create the physical elements of the simulation
-#this starts with the railway track, stations and the trains
+# in this python file we will create the physical elements of the simulation
 
+# import important libraries:
 import numpy as np
 import matplotlib.pyplot as plt
-import random
 
 from network import railway_network_current
 railway_network = railway_network_current()
-#from network import visualize_network
-#graph = visualize_network(railway_network)
+
+from exceltrains_to_code import get_train_data
+train_data = get_train_data()
 
 
-# Create a class for all different trains in the traject between Rotterdam and Den Haag HS
+#.......................................... INPUT DATA.................................................................
+
+# The train routes voor the train types Sprinter and Intercity in different directions are defined.
+
+# Route from Den haag HS to Rotterdam:
+route_HS_IC = [railway_network.nodes["Den Haag HS"].get("pos")[1], railway_network.nodes["Delft"].get("pos")[1],
+               railway_network.nodes["Rotterdam Centraal"].get("pos")[1]]  # Give distance of the stations in meters.
+
+route_HS_spr = [railway_network.nodes["Den Haag HS"].get("pos")[1], railway_network.nodes["Moerwijk"].get("pos")[1],
+                railway_network.nodes["Rijswijk"].get("pos")[1], railway_network.nodes["Delft"].get("pos")[1],
+                railway_network.nodes["Delft Campus"].get("pos")[1],
+                railway_network.nodes["Schiedam Centrum"].get("pos")[1],
+                railway_network.nodes["Rotterdam Centraal"].get("pos")[1]]  # Give distance of the stations in meters.
+
+# Route from Rotterdam to Den Haag HS:
+route_R_IC = [railway_network.nodes["Rotterdam Centraal"].get("pos")[1], railway_network.nodes["Delft"].get("pos")[1],
+              railway_network.nodes["Den Haag HS"].get("pos")[1]]  # Give distance of the stations in meters.
+
+route_R_spr = [railway_network.nodes["Rotterdam Centraal"].get("pos")[1],
+               railway_network.nodes["Schiedam Centrum"].get("pos")[1],
+               railway_network.nodes["Delft Campus"].get("pos")[1], railway_network.nodes["Delft"].get("pos")[1],
+               railway_network.nodes["Rijswijk"].get("pos")[1], railway_network.nodes["Moerwijk"].get("pos")[1],
+               railway_network.nodes["Den Haag HS"].get("pos")[1]]  # Give distance of the stations in meters.
+
+
+# At the following positions, it is possible to switch track.
+# It is possible to switch between track 1 and 2 and it is possible to switch between track 3 and 4.
+# The end stations are added as switchpoint.
+# Otherwise the code will continue to search for a new switch point before the train reaches the final location.
+
+switch_points_route_R = [railway_network.nodes["Switch 1"].get("pos")[1],  # Switch in route from Rotterdam to DH HS
+                         railway_network.nodes["Switch 2"].get("pos")[1],
+                         railway_network.nodes["Switch 3"].get("pos")[1],
+                         railway_network.nodes["Switch 4"].get("pos")[1],
+                         railway_network.nodes["Switch 5"].get("pos")[1],
+                         railway_network.nodes["Switch 6"].get("pos")[1],
+                         railway_network.nodes["Den Haag HS"].get("pos")[1]
+                         ]
+
+switch_points_route_HS = [railway_network.nodes["Switch 6"].get("pos")[1],  # Switch in route from DH HS to Rotterdam
+                          railway_network.nodes["Switch 5"].get("pos")[1],
+                          railway_network.nodes["Switch 4"].get("pos")[1],
+                          railway_network.nodes["Switch 3"].get("pos")[1],
+                          railway_network.nodes["Switch 2"].get("pos")[1],
+                          railway_network.nodes["Switch 1"].get("pos")[1],
+                          railway_network.nodes["Rotterdam Centraal"].get("pos")[1]
+                          ]
+
+
+# The following variable indicates the minimum distance between two trains on the same track (indicated in timesteps):
+distance = 1  # There is chosen for a minimum distance of 30 seconds (1 timestep)
+
+
+# The train data for the NS timetable is now imported and placed in the correct variables.
+
+# The list start_locations determines the start location of each train.
+# R is for trains from Rotterdam to Den Haag HS and HS is for trains in the other direction.
+start_locations = train_data['start_locations']
+
+# The following list contains the train types of all trains (IC or spr).
+traintype = train_data['traintypes']
+
+# The following list, the departure times of the different trains are set (in timesteps of 30 seconds).
+dep_time = train_data['departure_steps']
+
+# The following dictionaries contain the locations of all trains within the different tracks.
+# These are used to keep track of the current location of each train.
+# Furthermore the start locations on the tracks are determined within these dictionaries.
+track_1 = train_data['track_1']
+track_2 = train_data['track_2']
+track_3 = train_data['track_3']
+track_4 = train_data['track_4']
+
+
+#.......................................... DEFINE TRAIN CLASS........................................................
+
+# Create a class for all different trains in the traject between Rotterdam and Den Haag HS:
 class TRAIN:
     def __init__(self, train_id, type, location, route, switches, speed_distance, track):
         self.train_id = train_id
@@ -19,10 +95,11 @@ class TRAIN:
         self.location = location
         self.route = route
         self.switches = switches
-        self.speed_distance = speed_distance # speed in meter (per time step of 10s)
+        self.speed_distance = speed_distance  # speed in meter (per time step of 30s).
         self.track = track
 
 
+    # The move function is used to move the trains at one timestep (of 30 seconds)
     def move(self, track_1, track_2, track_3, track_4):
         if self.route:
             next_station = self.route[0]
@@ -30,54 +107,59 @@ class TRAIN:
             distance_to_next_station = abs(next_station - self.location)
             distance_to_next_switch = abs(next_switch - self.location)
 
-            distance = 1  # how many timesteps distance between two different trains
-
             # If the train is not near a station or near a switch point:
-            if distance_to_next_station >= abs(self.speed_distance) and distance_to_next_switch >= abs(self.speed_distance):
+            if distance_to_next_station >= abs(self.speed_distance) and distance_to_next_switch >= abs(
+                    self.speed_distance):
+                new_location = self.location + self.speed_distance  # Define new location of the train.
 
-                #check if there are already trains between the current location and the distance (distance in timesteps):
-                new_location = self.location + self.speed_distance
+                # Check if there are already trains between the current location and
+                # the required distance between trains (distance in timesteps).
+                # If there is space, the train will move to new_location
 
-                if self.track==3:  # self.speed_distance > 0
-                    if any((new_location + distance * self.speed_distance) <= value <= new_location for value in track_3.values()):
+                if self.track == 1:  # Train on track 1; self.speed_distance <= 0
+                    if any(new_location <= value <= (new_location + distance*self.speed_distance) for value in
+                           track_1.values()):
                         print(f"Train {self.train_id} cannot move to location {new_location}.")
                     else:
-                        self.location = new_location  # move train
+                        self.location = new_location  # move train to new_location.
+                        track_1[self.train_id] = self.location
+                        print(f"Train {self.train_id} is at location {self.location} meters, on track {self.track}.")
+
+                elif self.track == 2: # Train on track 2; self.speed_distance <= 0
+                    if any(new_location <= value <= (new_location + distance*self.speed_distance) for value in
+                           track_2.values()):
+                        print(f"Train {self.train_id} cannot move to location {new_location}.")
+                    else:
+                        self.location = new_location  # move train to new_location.
+                        track_2[self.train_id] = self.location
+                        print(f"Train {self.train_id} is at location {self.location} meters, on track {self.track}.")
+
+                elif self.track==3:  # Train on track 3; self.speed_distance > 0
+                    if any((new_location + distance * self.speed_distance) <= value <= new_location for value in
+                           track_3.values()):
+                        print(f"Train {self.train_id} cannot move to location {new_location}.")
+                    else:
+                        self.location = new_location  # move train to new_location.
                         track_3[self.train_id] = self.location
                         print(f"Train {self.train_id} is at location {self.location} meters, on track {self.track}.")
 
-
-                elif self.track==4:  # self.speed_distance > 0
-                    if any((new_location + distance*self.speed_distance) <= value <= new_location for value in track_4.values()):
+                elif self.track==4:  # Train on track 4; self.speed_distance > 0
+                    if any((new_location + distance * self.speed_distance) <= value <= new_location for value in
+                           track_4.values()):
                         print(f"Train {self.train_id} cannot move to location {new_location}.")
                     else:
-                        self.location = new_location  # move train
+                        self.location = new_location  # move train to new_location.
                         track_4[self.train_id] = self.location
                         print(f"Train {self.train_id} is at location {self.location} meters, on track {self.track}.")
 
 
-                elif self.track == 1:  # self.speed_distance <= 0
-                    if any(new_location <= value <= (new_location + distance*self.speed_distance) for value in track_1.values()):
-                        print(f"Train {self.train_id} cannot move to location {new_location}.")
-                    else:
-                        self.location = new_location  # move train
-                        track_1[self.train_id] = self.location
-                        print(f"Train {self.train_id} is at location {self.location} meters, on track {self.track}.")
-
-                elif self.track == 2: # self.speed_distance <= 0
-                    if any(new_location <= value <= (new_location + distance*self.speed_distance) for value in track_2.values()):
-                        print(f"Train {self.train_id} cannot move to location {new_location}.")
-                    else:
-                        self.location = new_location  # move train
-                        track_2[self.train_id] = self.location
-                        print(f"Train {self.train_id} is at location {self.location} meters, on track {self.track}.")
-
+            # If the train is near the next station:
             elif distance_to_next_station < abs(self.speed_distance):
-                # The train arrives at next station
-                # In this sitution, we assume unlimited platform capacity
+                # The train arrives at next station.
                 self.location = next_station
-                self.route = self.route[1:]
+                self.route = self.route[1:]  # The location of the current station is deleted from self.route.
 
+                # The function self.station_reached checks if the station is the end station.
                 if self.track == 1:
                     self.station_reached(track_1)
                 elif self.track == 2:
@@ -89,8 +171,8 @@ class TRAIN:
 
                 print(f"Train {self.train_id} arrived at {next_station} meters.")
 
-            else:
-                # The train passed a switch point
+
+            else:  # The train passed a switch point.
                 self.location += self.speed_distance
 
                 # In the function self.track_switch, it is checked whether there is space on the other track.
@@ -142,7 +224,6 @@ class TRAIN:
 
                     self.switches = self.switches[1:]
 
-
                 elif self.track == 3:
                     if self.double_track():  # gives True if there is double track after the switch
                         if any((self.location + distance * self.speed_distance) <= value <= self.location for value in track_4.values()):
@@ -192,16 +273,23 @@ class TRAIN:
 
                             print(f"Train {self.train_id} is switched to track {self.track}.")
 
+    def station_reached(self, track_name):
+    # The function station_reached is used if a train reaches a station.
+    # If the station is the end-station, the train is removed from its dictionary.
 
-    def station_reached(self, track_name):  # This function is used if a train reaches a station. If the station is the end-station, the train is removed from its dictionary.
-        if self.route:  # Self.route gives the value true if the train didn't reach the end station
-           track_name[self.train_id] = self.location
-        else:  # In the case that the train already reach the end station, the value is deleted from the dictionary
+        if self.route:  # Self.route gives the value True if the train didn't reach the end station.
+           track_name[self.train_id] = self.location  # Change the train location in the dictionary.
+        else:  # In the case that the train reaches the end station, the value is deleted from the dictionary.
             del track_name[self.train_id]
 
+
     def track_switch(self, current_track, potential_track, potential_track_number, occupation):
-        if len(current_track) > len(potential_track):  # in the case that the current track is bussier than the potential new track.
-            # The train will switch track if there is space on the other track.
+        # This function is used in the situation where there is double track.
+        # The function determines whether the train stays on its current track or switches tracks.
+
+        if len(current_track) > len(potential_track):
+            # In the case that the current track is bussier than the potential new track,
+            # the train will switch track if there is space on the other track.
             if occupation:
                 self.track = potential_track_number
 
@@ -211,46 +299,25 @@ class TRAIN:
 
                 print(f"Train {self.train_id} is switched to track {self.track}.")
 
-            else:
-                print(f"Train {self.train_id} stays on track at the switch point, because the potential new track is occupied.")
+            else:  # The potential track is occupied.
+                print(f"Train {self.train_id} stays on track at the switch point, because the potential new track"
+                      f" is occupied.")
 
-        else:
+        else:  # If the other track is bussier than the current track.
             print(f"Train {self.train_id} stays on track {self.track} at {self.location} meters.")
 
+
     def double_track(self):
-        # checks if there are 2 tracks in the same direction after the switch
+        # This function checks if there are 2 tracks in the same direction after the switch.
         if railway_network.nodes["Switch 2"].get("pos")[1] <= self.location <= railway_network.nodes["Switch 5"].get("pos")[1]:
             two_tracks = False
         else:
             two_tracks = True
-        # Outputs True if there are 2 tracks between the switchpoint
+        # Outputs True if there are 2 tracks between the determined switch points.
         return two_tracks
 
-# At the following positions, it is possible to switch track. It is possible to switch between track 1 and 2 and it is possible to switch between track 3 and 4.
-# The end stations are added as switchpoint. Otherwise the code will continue to search for a new switch point before the train reaches the final location.
-switch_points_route_R = [railway_network.nodes["Switch 1"].get("pos")[1], railway_network.nodes["Switch 2"].get("pos")[1], railway_network.nodes["Switch 3"].get("pos")[1], railway_network.nodes["Switch 4"].get("pos")[1], railway_network.nodes["Switch 5"].get("pos")[1], railway_network.nodes["Switch 6"].get("pos")[1], railway_network.nodes["Den Haag HS"].get("pos")[1]]
-switch_points_route_HS = [railway_network.nodes["Switch 6"].get("pos")[1], railway_network.nodes["Switch 5"].get("pos")[1], railway_network.nodes["Switch 4"].get("pos")[1], railway_network.nodes["Switch 3"].get("pos")[1], railway_network.nodes["Switch 2"].get("pos")[1], railway_network.nodes["Switch 1"].get("pos")[1], railway_network.nodes["Rotterdam Centraal"].get("pos")[1]]
-
-route_HS_IC = [railway_network.nodes["Den Haag HS"].get("pos")[1], railway_network.nodes["Delft"].get("pos")[1], railway_network.nodes["Rotterdam Centraal"].get("pos")[1]] # in m
-route_HS_spr = [railway_network.nodes["Den Haag HS"].get("pos")[1], railway_network.nodes["Moerwijk"].get("pos")[1], railway_network.nodes["Rijswijk"].get("pos")[1], railway_network.nodes["Delft"].get("pos")[1], railway_network.nodes["Delft Campus"].get("pos")[1], railway_network.nodes["Schiedam Centrum"].get("pos")[1], railway_network.nodes["Rotterdam Centraal"].get("pos")[1]] # in m
-route_R_IC = [railway_network.nodes["Rotterdam Centraal"].get("pos")[1], railway_network.nodes["Delft"].get("pos")[1], railway_network.nodes["Den Haag HS"].get("pos")[1]] # in m
-route_R_spr = [railway_network.nodes["Rotterdam Centraal"].get("pos")[1], railway_network.nodes["Schiedam Centrum"].get("pos")[1], railway_network.nodes["Delft Campus"].get("pos")[1], railway_network.nodes["Delft"].get("pos")[1], railway_network.nodes["Rijswijk"].get("pos")[1], railway_network.nodes["Moerwijk"].get("pos")[1], railway_network.nodes["Den Haag HS"].get("pos")[1]] # in m
 
 
-#train data:
-start_locations = ["R", "R", "R", "HS", "HS", "HS"]  # Determine the start location of each train. R is for trains from Rotterdam to Den Haag HS and HS is for trains in the other direction.
-traintype = ["IC", "IC", "IC", "IC", "IC", "IC"]  # Determine the train type of all trains (IC or spr)
-dep_time = [0, 0, 0, 0, 0, 0]  # set departure time, in timesteps of 10 seconds
-
-# dictionary with locations of trains within track.
-# These are used to keep track of the current location of each train.
-# Furthermore the start location on the track is determined within these dictionaries.
-track_1 = {0:0, 1:0, 2:0}
-track_2 = {}
-track_3 = {3:22600, 4:22600, 5:22600}
-track_4 = {}
-
-# The following train
 
 
 def train_creator(train_id):  # This function creates a train using the class TRAIN and the train_id as input
