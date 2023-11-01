@@ -372,7 +372,7 @@ def train_creator(train_id):
 
 
 def run_simulation():  # This function is used for running the simulation.
-    num_steps = 100  # Number of simulation steps (of 30s) is defined
+    num_steps = 300  # Number of simulation steps (of 30s) is defined
     current_trains = []
     time = 0  # The simulation starts at 0 seconds.
     data_output = []
