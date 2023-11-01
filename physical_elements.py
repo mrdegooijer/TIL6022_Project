@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 from network import railway_network_current
 railway_network = railway_network_current()
 
-from exceltrains_to_code import get_train_data
-train_data = get_train_data()
 
 
 #.......................................... INPUT DATA.................................................................
@@ -66,23 +64,6 @@ distance = 1  # There is chosen for a minimum distance of 30 seconds (1 timestep
 
 # The train data for the NS timetable is now imported and placed in the correct variables.
 
-# The list start_locations determines the start location of each train.
-# R is for trains from Rotterdam to Den Haag HS and HS is for trains in the other direction.
-start_locations = train_data['start_locations']
-
-# The following list contains the train types of all trains (IC or spr).
-traintype = train_data['traintypes']
-
-# The following list, the departure times of the different trains are set (in timesteps of 30 seconds).
-dep_time = train_data['departure_steps']
-
-# The following dictionaries contain the locations of all trains within the different tracks.
-# These are used to keep track of the current location of each train.
-# Furthermore the start locations on the tracks are determined within these dictionaries.
-track_1 = train_data['track_1']
-track_2 = train_data['track_2']
-track_3 = train_data['track_3']
-track_4 = train_data['track_4']
 
 
 #.......................................... DEFINE TRAIN CLASS........................................................
@@ -363,6 +344,7 @@ def train_creator(train_id):  # This function creates a train using the class TR
         speed = 750  # speed in meter (per time step of 30s)
         train = TRAIN(train_id, traintype[train_id], start_location, route, switches, speed, track)  # Create train with all specifications
     return [train]
+
 
 
 def run_simulation():  # This function is used for running the simulation.
