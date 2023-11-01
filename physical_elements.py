@@ -89,7 +89,7 @@ track_4 = train_data['track_4']
 
 # Create a class for all different trains in the traject between Rotterdam and Den Haag HS:
 class TRAIN:
-    def __init__(self, train_id, type, location, route, switches, speed_distance, track):
+    def _init_(self, train_id, type, location, route, switches, speed_distance, track):
         self.train_id = train_id
         self.type = type
         self.location = location
