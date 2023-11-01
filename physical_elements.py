@@ -386,11 +386,14 @@ def run_simulation():  # This function is used for running the simulation.
     return data_output
 
 
-# Create a function which converts the train data to the correct format for the visualization.
-# The data from the different track dictionaries is converted into the folllowing form: [(x1.1, y1.1), (x1.2, y1.2), …]
 def data_converter(track_1, track_2, track_3, track_4):
+    # This function converts the train data to the correct format for the visualization.
+    # The data from the different track dictionaries is converted into the folllowing form:
+    # [(x1.1, y1.1), (x1.2, y1.2), …]
+
     data = []
-    def single_train(track, x_value_track): # this function converts the value of a single train to the correct format
+
+    def single_train(track, x_value_track): # this function converts the value of a single train to the correct format.
         result = [(x_value_track, value) for value in track.values()]
         return result
 
