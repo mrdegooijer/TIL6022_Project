@@ -10,6 +10,7 @@ railway_network = railway_network_current()
 from exceltrains_to_code import get_train_data
 train_data = get_train_data()
 
+
 #.......................................... INPUT DATA.................................................................
 
 # The train routes voor the train types Sprinter and Intercity in different directions are defined.
@@ -62,6 +63,9 @@ switch_points_route_HS = [railway_network.nodes["Switch 6"].get("pos")[1],  # Sw
 # The following variable indicates the minimum distance between two trains on the same track (indicated in timesteps):
 distance = 1  # There is chosen for a minimum distance of 30 seconds (1 timestep)
 
+# The following speeds are used for the trains:
+speed_IC = 900  # Speed of an Intercity (in meter per time step of 30s)
+speed_spr = 750  # Speed of a Sprinter (in meter per time step of 30s)
 
 # The train data for the NS timetable is now imported and placed in the correct variables.
 
@@ -320,8 +324,10 @@ class TRAIN:
 
 
 
-def train_creator(train_id):  # This function creates a train using the class TRAIN and the train_id as input
-    #check in which track the train starts:
+def train_creator(train_id):
+# This function creates a train using the class TRAIN and the train_id as input.
+
+    # First, check in which track the train starts:
     if train_id in track_1:  # check if the train id exists in the dictionary track_1
         start_location = track_1[train_id]
         track = 1
@@ -335,32 +341,33 @@ def train_creator(train_id):  # This function creates a train using the class TR
         start_location = track_4[train_id]
         track = 4
 
+# Then, check
     # if the train is an IC from Den Haag HS to Rotterdam, create the train with the correct route and speed
     if start_locations[train_id] == "HS" and traintype[train_id] == "IC":
         route = route_HS_IC
         switches = switch_points_route_HS
-        speed = -900  # speed in meter (per time step of 30s) (negative speed because the route is from Den Haag HS to Rotterdam)
+        speed = -speed_IC  # speed in meter (per time step of 30s) (negative speed because the route is from Den Haag HS to Rotterdam)
         train = TRAIN(train_id, traintype[train_id], start_location, route, switches, speed, track)  # Create train with all specifications
 
     # if the train is a sprinter from Den Haag HS to Rotterdam, create the train with the correct route and speed
     elif start_locations[train_id] == "HS" and traintype[train_id] == "spr":
         route = route_HS_spr
         switches = switch_points_route_HS
-        speed = -750  # speed in meter (per time step of 30s)
+        speed = -speed_spr  # speed in meter (per time step of 30s)
         train = TRAIN(train_id, traintype[train_id], start_location, route, switches, speed, track)  # Create train with all specifications
 
     # if the train is an IC from Rotterdam to Den Haag HS, create the train with the correct route and speed
     elif start_locations[train_id] == "R" and traintype[train_id] == "IC":
         route = route_R_IC
         switches = switch_points_route_R
-        speed = 900  # speed in meter (per time step of 30s)
+        speed = speed_IC  # speed in meter (per time step of 30s)
         train = TRAIN(train_id, traintype[train_id], start_location, route, switches, speed, track)  # Create train with all specifications
 
     # if the train is an sprinter from Rotterdam to Den Haag HS, create the train with the correct route and speed
     else:
         route = route_R_spr
         switches = switch_points_route_R
-        speed = 750  # speed in meter (per time step of 30s)
+        speed = speed_spr  # speed in meter (per time step of 30s)
         train = TRAIN(train_id, traintype[train_id], start_location, route, switches, speed, track)  # Create train with all specifications
     return [train]
 
