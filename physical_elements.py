@@ -311,7 +311,7 @@ class TRAIN:
 
     def double_track(self):
         # This function checks if there are 2 tracks in the same direction after the switch.
-        if railway_network.nodes["Switch 2"].get("pos")[1] <= self.location <= railway_network.nodes["Switch 4"].get("pos")[1]:
+        if railway_network.nodes["Switch 2"].get("pos")[1] <= self.location <= railway_network.nodes["Switch 5"].get("pos")[1]:
             two_tracks = False
         else:
             two_tracks = True
