@@ -30,7 +30,7 @@ class TRAIN:
             distance_to_next_station = abs(next_station - self.location)
             distance_to_next_switch = abs(next_switch - self.location)
 
-            distance = 3  # how many timesteps distance between two different trains
+            distance = 1  # how many timesteps distance between two different trains
 
             # If the train is not near a station or near a switch point:
             if distance_to_next_station >= abs(self.speed_distance) and distance_to_next_switch >= abs(self.speed_distance):
@@ -90,42 +90,107 @@ class TRAIN:
                 print(f"Train {self.train_id} arrived at {next_station} meters.")
 
             else:
-                # The train passed at a switch point
+                # The train passed a switch point
                 self.location += self.speed_distance
-
-                self.switches = self.switches[1:]
 
                 # In the function self.track_switch, it is checked whether there is space on the other track.
                 # Furthermore there is checked whether the other track is quieter than the current one.
                 # In that case the train will change tracks.
                 if self.track == 1:
-                    if any(self.location <= value <= (self.location + distance * self.speed_distance) for value in track_2.values()):
-                        occupation = False  #if there is enough space on track 2
-                    else:
-                        occupation = True # in the case that there is enough space on track 2
-                    self.track_switch(track_1, track_2, 2, occupation)
+                    if self.double_track():  # gives True if there is double track after the switch
+                        if any(self.location <= value <= (self.location + distance * self.speed_distance) for value in track_2.values()):
+                            # There is not enough space on track 2.
+                            # The train stays on the current track.
+                            occupation = False  # if there is not enough space on track 2, the variable occupation becomes False
+                        else:  # There is enough space on track 2.
+                            occupation = True
+
+                        self.switches = self.switches[1:]
+                        self.track_switch(track_1, track_2, 2, occupation)
+
+                    else:  # in the situation, there is only single track after the switch:
+                        # It is now being examined whether there is sufficient space on the new track.
+                        # Otherwise the train has to wait before it can change tracks.
+                        if any(self.location <= value <= (self.location + distance * self.speed_distance) for value in track_2.values()):
+                            # There is not enough space on track 2, the train has to wait.
+                            self.location -= self.speed_distance  # The train will remain at the old location and the location change is made undone.
+                            print(f"Train {self.train_id} has to wait at the switch point, because new track is occupied.")
+
+                        else: # There is enough space on track 2.
+                            self.switches = self.switches[1:]
+
+                            # The train changes track to track 2:
+                            self.track = 2
+
+                            # move the train from the old track dictionary to the new track dictionary.
+                            del track_1[self.train_id]
+                            track_2.update({self.train_id: self.location})
+
+                            print(f"Train {self.train_id} is switched to track {self.track}.")
 
                 elif self.track == 2:
-                    if any(self.location <= value <= (self.location + distance * self.speed_distance) for value in track_1.values()):
-                        occupation = False  #if there is enough space on track 1
-                    else:
-                        occupation = True # in the case that there is enough space on track 1
-                    self.track_switch(track_2, track_1, 1, occupation)
+                    if self.double_track():  # gives True if there is double track after the switch
+                        if any(self.location <= value <= (self.location + distance * self.speed_distance) for value in track_1.values()):
+                            occupation = False  #if there is not enough space on track 1, the train stays on track 2
+                        else:
+                            occupation = True  # in the case that there is enough space on track 1
+                        self.track_switch(track_2, track_1, 1, occupation)
+
+                    else: # in this situation, there is only single track after the switch:
+                        print(f"Train {self.train_id} stays on track at the switch point, because there is only single track.")
+                        # The train has to stay on the current track.
+
+                    self.switches = self.switches[1:]
+
 
                 elif self.track == 3:
-                    if any((self.location + distance * self.speed_distance) <= value <= self.location for value in track_4.values()):
-                        occupation = False  #if there is enough space on track 4
-                    else:
-                        occupation = True # in the case that there is enough space on track 4
-                    self.track_switch(track_3, track_4, 4, occupation)
+                    if self.double_track():  # gives True if there is double track after the switch
+                        if any((self.location + distance * self.speed_distance) <= value <= self.location for value in track_4.values()):
+                            occupation = False  # if there is not enough space on track 4, the train stays on track 3
+                        else:
+                            occupation = True # in the case that there is enough space on track 4
+                        self.track_switch(track_3, track_4, 4, occupation)
+
+                    else: # in this situation, there is only single track after the switch:
+                        print(f"Train {self.train_id} stays on track at the switch point, because there is only single track.")
+
+                        # The train has to stay on the current track.
+
+                    self.switches = self.switches[1:]
+
 
                 else:  # If the train is on track 4
-                    if any((self.location + distance * self.speed_distance) <= value <= self.location for value in
-                           track_3.values()):
-                        occupation = False  # if there is enough space on track 3
-                    else:
-                        occupation = True  # in the case that there is enough space on track 3
-                    self.track_switch(track_4, track_3, 3)
+                    if self.double_track():  # gives True if there is double track after the switch
+                        if any((self.location + distance * self.speed_distance) <= value <= self.location for value in
+                               track_3.values()):
+                            # There is not enough space on track 3.
+                            # The train stays on the current track.
+                            occupation = False  # if there is not enough space on track 3, the variable occupation becomes False
+                        else:  # There is enough space on track 3.
+                            occupation = True
+
+                        self.switches = self.switches[1:]
+                        self.track_switch(track_4, track_3, 3, occupation)
+
+                    else:  # in the situation, there is only single track after the switch:
+                        # It is now being examined whether there is sufficient space on the new track.
+                        # Otherwise the train has to wait before it can change tracks.
+                        if any((self.location + distance * self.speed_distance) <= value <= self.location for value in
+                               track_3.values()):                            # There is not enough space on track 2, the train has to wait.
+                            self.location -= self.speed_distance  # The train will remain at the old location and the location change is made undone.
+                            print(f"Train {self.train_id} has to wait at the switch point, because new track is occupied.")
+
+                        else: # There is enough space on track 3.
+                            self.switches = self.switches[1:]
+
+                            # The train changes track to track 3:
+                            self.track = 3
+
+                            # move the train from the old track dictionary to the new track dictionary.
+                            del track_4[self.train_id]
+                            track_3.update({self.train_id: self.location})
+
+                            print(f"Train {self.train_id} is switched to track {self.track}.")
 
 
     def station_reached(self, track_name):  # This function is used if a train reaches a station. If the station is the end-station, the train is removed from its dictionary.
@@ -147,11 +212,19 @@ class TRAIN:
                 print(f"Train {self.train_id} is switched to track {self.track}.")
 
             else:
-                print(f"Train {self.train_id} stays on track {self.track} at {self.location} meters, because the potential new track is occupied.")
+                print(f"Train {self.train_id} stays on track at the switch point, because the potential new track is occupied.")
 
         else:
             print(f"Train {self.train_id} stays on track {self.track} at {self.location} meters.")
 
+    def double_track(self):
+        # checks if there are 2 tracks in the same direction after the switch
+        if railway_network.nodes["Switch 2"].get("pos")[1] <= self.location <= railway_network.nodes["Switch 5"].get("pos")[1]:
+            two_tracks = False
+        else:
+            two_tracks = True
+        # Outputs True if there are 2 tracks between the switchpoint
+        return two_tracks
 
 # At the following positions, it is possible to switch track. It is possible to switch between track 1 and 2 and it is possible to switch between track 3 and 4.
 # The end stations are added as switchpoint. Otherwise the code will continue to search for a new switch point before the train reaches the final location.
@@ -165,16 +238,16 @@ route_R_spr = [railway_network.nodes["Rotterdam Centraal"].get("pos")[1], railwa
 
 
 #train data:
-start_locations = ["R", "R", "R"]  # Determine the start location of each train. R is for trains from Rotterdam to Den Haag HS and HS is for trains in the other direction.
-traintype = ["IC", "IC", "IC"]  # Determine the train type of all trains (IC or spr)
-dep_time = [0, 0, 0]  # set departure time, in timesteps of 10 seconds
+start_locations = ["R", "R", "R", "HS", "HS", "HS"]  # Determine the start location of each train. R is for trains from Rotterdam to Den Haag HS and HS is for trains in the other direction.
+traintype = ["IC", "IC", "IC", "IC", "IC", "IC"]  # Determine the train type of all trains (IC or spr)
+dep_time = [0, 0, 0, 0, 0, 0]  # set departure time, in timesteps of 10 seconds
 
 # dictionary with locations of trains within track.
 # These are used to keep track of the current location of each train.
 # Furthermore the start location on the track is determined within these dictionaries.
 track_1 = {0:0, 1:0, 2:0}
 track_2 = {}
-track_3 = {}
+track_3 = {3:22600, 4:22600, 5:22600}
 track_4 = {}
 
 # The following train
@@ -199,28 +272,28 @@ def train_creator(train_id):  # This function creates a train using the class TR
     if start_locations[train_id] == "HS" and traintype[train_id] == "IC":
         route = route_HS_IC
         switches = switch_points_route_HS
-        speed = -300  # speed in meter (per time step of 10s) (negative speed because the route is from Den Haag HS to Rotterdam)
+        speed = -900  # speed in meter (per time step of 30s) (negative speed because the route is from Den Haag HS to Rotterdam)
         train = TRAIN(train_id, traintype[train_id], start_location, route, switches, speed, track)  # Create train with all specifications
 
     # if the train is a sprinter from Den Haag HS to Rotterdam, create the train with the correct route and speed
     elif start_locations[train_id] == "HS" and traintype[train_id] == "spr":
         route = route_HS_spr
         switches = switch_points_route_HS
-        speed = -250  # speed in meter (per time step of 10s)
+        speed = -750  # speed in meter (per time step of 30s)
         train = TRAIN(train_id, traintype[train_id], start_location, route, switches, speed, track)  # Create train with all specifications
 
     # if the train is an IC from Rotterdam to Den Haag HS, create the train with the correct route and speed
     elif start_locations[train_id] == "R" and traintype[train_id] == "IC":
         route = route_R_IC
         switches = switch_points_route_R
-        speed = 300  # speed in meter (per time step of 10s)
+        speed = 900  # speed in meter (per time step of 30s)
         train = TRAIN(train_id, traintype[train_id], start_location, route, switches, speed, track)  # Create train with all specifications
 
     # if the train is an sprinter from Rotterdam to Den Haag HS, create the train with the correct route and speed
     else:
         route = route_R_spr
         switches = switch_points_route_R
-        speed = 250  # speed in meter (per time step of 10s)
+        speed = 750  # speed in meter (per time step of 30s)
         train = TRAIN(train_id, traintype[train_id], start_location, route, switches, speed, track)  # Create train with all specifications
     return [train]
 
@@ -240,7 +313,7 @@ def run_simulation():  # This function is used for running the simulation.
             for train in train_list:
                 train.move(track_1, track_2, track_3, track_4)
                 #train.increase_time()
-        time += 10  # Increase time of the model with 10 seconds
+        time += 30  # Increase time of the model with 30 seconds
         print(time)
         data_output.append(data_converter(track_1, track_2, track_3, track_4))
     return data_output
@@ -254,10 +327,10 @@ def data_converter(track_1, track_2, track_3, track_4):
         result = [(x_value_track, value) for value in track.values()]
         return result
 
-    data.extend(single_train(track_1, -15))
-    data.extend(single_train(track_2, -5))
-    data.extend(single_train(track_3, 5))
-    data.extend(single_train(track_4, 15))
+    data.extend(single_train(track_1, 15))
+    data.extend(single_train(track_2, 5))
+    data.extend(single_train(track_3, -5))
+    data.extend(single_train(track_4, -15))
     return (data)
 
 
