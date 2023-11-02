@@ -61,11 +61,11 @@ switch_points_route_HS = [railway_network.nodes["Switch 6"].get("pos")[1],  # Sw
 
 
 # The following variable indicates the minimum distance between two trains on the same track (indicated in timesteps):
-distance = 6  # There is chosen for a minimum distance of 30 seconds (1 timestep)
+distance = 1  # There is chosen for a minimum distance of 30 seconds (1 timestep)
 
 # The following speeds are used for the trains:
-speed_IC = 700  # Speed of an Intercity (in meter per time step of 30s)
-speed_spr = 500  # Speed of a Sprinter (in meter per time step of 30s)
+speed_IC = 900  # Speed of an Intercity (in meter per time step of 30s)
+speed_spr = 750  # Speed of a Sprinter (in meter per time step of 30s)
 
 # The train data for the NS timetable is now imported and placed in the correct variables.
 
@@ -311,7 +311,7 @@ class TRAIN:
 
     def double_track(self):
         # This function checks if there are 2 tracks in the same direction after the switch.
-        if railway_network.nodes["Switch 2"].get("pos")[1] <= self.location <= railway_network.nodes["Switch 5"].get("pos")[1]:
+        if railway_network.nodes["Switch 2"].get("pos")[1] <= self.location <= railway_network.nodes["Switch 4"].get("pos")[1]:
             two_tracks = False
         else:
             two_tracks = True
@@ -372,7 +372,7 @@ def train_creator(train_id):
 
 
 def run_simulation():  # This function is used for running the simulation.
-    num_steps = 300  # Number of simulation steps (of 30s) is defined
+    num_steps = 100  # Number of simulation steps (of 30s) is defined
     current_trains = []
     time = 0  # The simulation starts at 0 seconds.
     data_output = []

@@ -45,10 +45,7 @@ print(traintype_HS)
 
 reference_time = pd.to_datetime('16:00:00', format='%H:%M:%S')
 step_list = []
-for i in deptimes_HS:
-    delta = deptimes_HS[i]-reference_time
-    seconds = delta.total_seconds()
-    step_list.append(seconds)
+
 
 print(step_list)
 
@@ -61,6 +58,11 @@ print('End time:', t2.time())
 # get difference
 delta = t2 - t1
 
+for i in deptimes_HS:
+    delta = deptimes_HS[i]-reference_time
+    seconds = delta.total_seconds()
+    step_list.append(seconds)
+    
 # time difference in seconds
 print(f"Time difference is {delta.total_seconds()} seconds")
 
