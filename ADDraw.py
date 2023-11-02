@@ -9,7 +9,7 @@ def simulate(network, positions, train_locations):
     :param network: Networkx graph
     :param positions: Dictionary with the positions of the nodes, created by get_node_dict()
     :param train_locations: List of dictionaries with keys 'train_id' and 'location'
-    :return:
+    :return: graph
     """
     #Activate bokeh backend
     hv.extension('bokeh')
