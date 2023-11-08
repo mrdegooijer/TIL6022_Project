@@ -50,7 +50,5 @@ print(f'total delay: {int(total_delay/30)} minutes')
 
 for train_index in range(0,36): # Change this to the desired train index
     delay_info = train_info_dict[train_index]
-    if delay <= 0:
-        print('on time')
-    else:
+    if delay >= 0:
         print(f"Train {train_index} (Type: {delay_info['Type']}) has a delay of {int(delay_info['Delay']/30)} minutes.")
