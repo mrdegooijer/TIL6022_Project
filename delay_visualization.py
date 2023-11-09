@@ -7,7 +7,7 @@ timestep = 30  # define the timestep used in the model
 traintype = train_data['traintypes']
 print(traintype)
 
-travel_time_limits = {'IC': 570, 'spr': 720}  # time normaly used per train type
+travel_time_limits = {'IC': 1140, 'spr': 1440}  # time normaly used per train type
 # Trains which exceeds travel_time_limits will be defined as delayed
 
 
