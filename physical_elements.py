@@ -376,6 +376,7 @@ def run_simulation():  # This function is used for running the simulation.
     current_trains = []
     time = 0  # The simulation starts at 0 seconds.
     data_output = []
+    data_output_delay = []
 
     for step in range(num_steps):  # Loop through the timesteps.
         for train_id in range(len(start_locations)):  # Loops through the different train id's.
@@ -390,9 +391,13 @@ def run_simulation():  # This function is used for running the simulation.
         time += 30  # Increase time of the model with 30 seconds.
         print(f"Next timestep at {time} seconds:")
 
-        # Use data_output function to put the results in the right form for the visualization.
+        # Use data_converter function to put the results in the right form for the visualization.
         data_output.append(data_converter(track_1, track_2, track_3, track_4))
-    return data_output
+
+        # Use data_converter_delay function to put the results in the right form for the delay analysis
+        data_output_delay.append(data_converter_delay(track_1, track_2, track_3, track_4))
+
+    return data_output, data_output_delay
 
 
 #.......................................... Convert data........................................................
@@ -404,7 +409,8 @@ def data_converter(track_1, track_2, track_3, track_4):
 
     data = []
 
-    def single_train(track, x_value_track):  # this function converts the value of a single train to the correct format.
+    def single_train(track, x_value_track):
+        # this function converts the value of a single train to the correct format for the visualization.
         result = [(x_value_track, value) for value in track.values()]
         return result
 
@@ -415,6 +421,18 @@ def data_converter(track_1, track_2, track_3, track_4):
     return (data)
 
 
+def data_converter_delay(track_1, track_2, track_3, track_4):
+    # This function converts the train data to the correct format for the delay visualization.
+    # The data from the different track dictionaries is converted to one dictionary for all trains in a single time step
+
+    all_train_dictionary = {**track_1, **track_2, **track_3, **track_4}
+
+    return (all_train_dictionary)
+
+
 #............................................ Run and print output........................................................
 
-print(run_simulation())
+visualization_output, delay_output = run_simulation()
+
+print(visualization_output)
+print(delay_output)
