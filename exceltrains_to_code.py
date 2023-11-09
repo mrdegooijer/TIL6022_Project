@@ -60,9 +60,9 @@ def get_train_data():
     departure_steps = steps.tolist()
 
     #print(deptimes_alltrains)
-    #print(departure_steps)
-    #print(traintypes)
-    #print(start_locations)
+    print(departure_steps)
+    print(traintypes)
+    print(start_locations)
 
     track_1= { }
     track_2= { }
