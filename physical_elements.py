@@ -64,8 +64,8 @@ switch_points_route_HS = [railway_network.nodes["Switch 6"].get("pos")[1],  # Sw
 distance = 6  # There is chosen for a minimum distance of 30 seconds (1 timestep)
 
 # The following speeds are used for the trains:
-speed_IC = 700  # Speed of an Intercity (in meter per time step of 30s)
-speed_spr = 300  # Speed of a Sprinter (in meter per time step of 30s)
+speed_IC = 630  # Speed of an Intercity (in meter per time step of 30s)
+speed_spr = 520  # Speed of a Sprinter (in meter per time step of 30s)
 
 # The train data for the NS timetable is now imported and placed in the correct variables.
 
